@@ -1,3 +1,6 @@
+import telebot
+API_TOKEN = 'Your Token'
+bot = telebot.TeleBot(API_TOKEN)
 CODE = {' ': '_', 
 	"'": '.----.', 
 	'(': '-.--.-', 
@@ -46,15 +49,22 @@ CODE = {' ': '_',
 	'Y': '-.--', 
 	'Z': '--..', 
 	'_': '..--.-'}
- 
-def convertToMorseCode(sentence):
-    sentence = sentence.upper()
+
+@bot.message_handler(commands=['help', 'start'])
+def send_welcome(message):
+    bot.send_message(message.chat.id, "Manda il tuo messaggio")
+
+@bot.message_handler(func=lambda message: True)
+def message_received(message):
+	code=convertToMorseCode(message.text)#usare il campo text , messagge fa stampare tutto lo storico 
+	bot.send_message(message.chat.id,code)	
+
+
+def convertToMorseCode(message):
+    message = message.upper()
     encodedSentence = ""
-    for character in sentence:
+    for character in message:
         encodedSentence += CODE[character] + " " 
     return encodedSentence
- 
-message = "SOS"
-code = convertToMorseCode(message)
-print(code)
- 
+
+bot.polling()
